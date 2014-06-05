@@ -29,12 +29,16 @@ def get_package_adb(package_line):
     return suffix
 
 
+def is_package_line(line):
+    return line.startswith("package:")
+
+
 def uninstall(device, app_prefixes):
     installed_packages = ''
     try:
         retrieved_packages = adb_list_packages(device)
         installed_packages = (retrieved_packages.decode(sys.stdout.encoding)).splitlines()
-        installed_packages = [get_package_adb(line) for line in installed_packages]
+        installed_packages = [get_package_adb(line) for line in installed_packages if is_package_line(line)]
     except subprocess.CalledProcessError as calledProcessError:
         print("Failed execute adb to get packages list", calledProcessError, file=sys.stderr)
         return
